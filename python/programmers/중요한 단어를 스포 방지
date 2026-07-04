@@ -1,0 +1,42 @@
+# 중요한 단어를 스포 방지
+
+def solution(message, spoiler_ranges):
+    answer = 0
+    spoiler = set()
+    not_spoiler = set()
+    
+    word_tmp = message.split(" ")
+    words = []
+    
+    #단어 및 인덱스 분리
+    idx = 0
+    for tmp in word_tmp:
+        words.append([tmp, idx, idx + len(tmp) -1, False])
+        idx += len(tmp) + 1
+    
+    
+    #스포방지 구간과 겹치는 지 확인
+    idx = 0
+    for s1, e1 in spoiler_ranges:
+        for i in range(idx, len(words)):
+            word, s2, e2, flag = words[i] 
+            
+            if s2 > e1:
+                idx = i
+                break
+                
+            if overlap(s1, e1, s2, e2):
+                words[i][3] = True
+                
+    for word in words:
+        if word[3]:
+            spoiler.add(word[0])
+        else:
+            not_spoiler.add(word[0])
+    
+    answer = len(spoiler - not_spoiler)
+    
+    return answer
+
+def overlap(s1, e1, s2, e2):
+    return max(s1, s2) <= min(e1, e2)
